@@ -4,16 +4,17 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\User;
+use App\Models\Grade;
+use App\Models\Submission;
 
-class UserFactory extends Factory
+class GradeFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = Grade::class;
 
     /**
      * Define the model's default state.
@@ -21,10 +22,9 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->safeEmail(),
-            'password' => $this->faker->password(),
-            'role' => $this->faker->randomElement(["admin","student","teacher"]),
+            'submission_id' => Submission::factory(),
+            'grade' => $this->faker->randomNumber(),
+            'comments' => $this->faker->text(),
         ];
     }
 }

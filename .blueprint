@@ -1,0 +1,64 @@
+created:
+    - database/factories/UserFactory.php
+    - database/factories/ClassroomFactory.php
+    - database/factories/TopicFactory.php
+    - database/factories/MaterialFactory.php
+    - database/factories/AssignmentFactory.php
+    - database/factories/SubmissionFactory.php
+    - database/factories/GradeFactory.php
+    - database/factories/DiscussionFactory.php
+    - database/factories/AttendanceFactory.php
+    - database/factories/AttendanceRecordFactory.php
+    - database/factories/CommentFactory.php
+    - database/factories/NotificationFactory.php
+    - database/migrations/2024_07_17_020003_create_users_table.php
+    - database/migrations/2024_07_17_020004_create_classrooms_table.php
+    - database/migrations/2024_07_17_020005_create_topics_table.php
+    - database/migrations/2024_07_17_020006_create_materials_table.php
+    - database/migrations/2024_07_17_020007_create_assignments_table.php
+    - database/migrations/2024_07_17_020008_create_submissions_table.php
+    - database/migrations/2024_07_17_020009_create_grades_table.php
+    - database/migrations/2024_07_17_020010_create_discussions_table.php
+    - database/migrations/2024_07_17_020011_create_attendances_table.php
+    - database/migrations/2024_07_17_020012_create_attendance_records_table.php
+    - database/migrations/2024_07_17_020013_create_comments_table.php
+    - database/migrations/2024_07_17_020014_create_notifications_table.php
+    - database/migrations/2024_07_17_020015_create_classroom_user_table.php
+    - database/migrations/2024_07_17_020016_create_topicables_table.php
+    - app/Models/User.php
+    - app/Models/Classroom.php
+    - app/Models/Topic.php
+    - app/Models/Material.php
+    - app/Models/Assignment.php
+    - app/Models/Submission.php
+    - app/Models/Grade.php
+    - app/Models/Discussion.php
+    - app/Models/Attendance.php
+    - app/Models/AttendanceRecord.php
+    - app/Models/Comment.php
+    - app/Models/Notification.php
+    - database/seeders/UserSeeder.php
+    - database/seeders/ClassroomSeeder.php
+    - database/seeders/TopicSeeder.php
+    - database/seeders/AssignmentSeeder.php
+    - database/seeders/SubmissionSeeder.php
+    - database/seeders/GradeSeeder.php
+    - database/seeders/DiscussionSeeder.php
+    - database/seeders/AttendanceSeeder.php
+    - database/seeders/AttendanceRecordSeeder.php
+    - database/seeders/NotificationSeeder.php
+models:
+    Assignment: { id: 'ulid primary', classroom_id: 'ulid foreign:classrooms onDelete:cascade', title: string, description: text, due_date: timestamp, timestamps: timestamps, relationships: { belongsTo: Classroom, morphMany: Comment, morphToMany: Topic } }
+    Attendance: { id: 'ulid primary', classroom_id: 'ulid foreign:classrooms onDelete:cascade', date: date, timestamps: timestamps, relationships: { hasMany: AttendanceRecord, morphMany: Comment, morphToMany: Topic } }
+    AttendanceRecord: { id: 'ulid primary', attendance_id: 'ulid foreign:attendances onDelete:cascade', student_id: 'ulid foreign:users onDelete:cascade', status: 'enum:present,absent', timestamps: timestamps }
+    Classroom: { id: 'ulid primary', name: string, description: text, timestamps: timestamps, relationships: { hasMany: 'Material, Assignment, Discussion, Attendance, Comment', belongsToMany: User } }
+    ClassroomTeacher: { id: 'ulid primary', classroom_id: 'ulid foreign:classrooms onDelete:cascade', teacher_id: 'ulid foreign:users onDelete:cascade', timestamps: timestamps }
+    Comment: { id: 'ulid primary', user_id: 'ulid foreign:users onDelete:cascade', content: text, timestamps: timestamps, relationships: { morphTo: Commentable } }
+    Discussion: { id: 'ulid primary', classroom_id: 'ulid foreign:classrooms onDelete:cascade', user_id: 'ulid foreign:users onDelete:cascade', content: text, timestamps: timestamps }
+    Enrollment: { id: 'ulid primary', classroom_id: 'ulid foreign:classrooms onDelete:cascade', student_id: 'ulid foreign:users onDelete:cascade', timestamps: timestamps }
+    Grade: { id: 'ulid primary', submission_id: 'ulid foreign:submissions onDelete:cascade', grade: 'integer unsigned', comments: 'text nullable', timestamps: timestamps }
+    Material: { id: 'ulid primary', classroom_id: 'ulid foreign:classrooms onDelete:cascade', title: string, content: text, timestamps: timestamps, relationships: { morphMany: Comment, morphToMany: Topic } }
+    Notification: { id: 'ulid primary', user_id: 'ulid foreign:users onDelete:cascade', message: text, is_read: 'boolean default:false', timestamps: timestamps, relationships: { belongsTo: User } }
+    Submission: { id: 'ulid primary', assignment_id: 'ulid foreign:assignments onDelete:cascade', student_id: 'ulid foreign:users onDelete:cascade', content: text, status: 'enum:not_started,submitted,graded', submitted_at: 'timestamp nullable', timestamps: timestamps, relationships: { hasOne: Grade } }
+    Topic: { id: 'ulid primary', name: string, description: 'text nullable', timestamps: timestamps, relationships: { morphedByMany: 'Material, Assignment, Attendance' } }
+    User: { id: 'ulid primary', name: string, email: 'string unique', password: 'string:255', role: 'enum:admin,student,teacher', timestamps: timestamps, relationships: { hasMany: 'Discussion, Submission, AttendanceRecord, Comment, Grade, Notification', belongsToMany: Classroom } }
