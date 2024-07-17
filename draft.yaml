@@ -1,0 +1,113 @@
+# draft.yaml
+
+models:
+  User:
+    ulid
+    name: string
+    email: string unique
+    password: string:255
+    role: enum:admin,student,teacher
+    timestamps
+    relationships:
+      hasMany: Discussion, Submission, AttendanceRecord, Comment, Grade, Notification
+      belongsToMany: Classroom
+
+  Classroom:
+    ulid
+    name: string
+    description: text
+    timestamps
+    relationships:
+      hasMany: Material, Assignment, Discussion, Attendance, Comment
+      belongsToMany: User
+
+  Topic:
+    ulid
+    name: string
+    description: text nullable
+    timestamps
+    relationships:
+      morphedByMany: Material, Assignment, Attendance
+
+  Material:
+    ulid
+    classroom_id: ulid foreign:classrooms onDelete:cascade
+    title: string
+    content: text
+    timestamps
+    relationships:
+      morphMany: Comment
+      morphToMany: Topic
+
+  Assignment:
+    ulid
+    classroom_id: ulid foreign:classrooms onDelete:cascade
+    title: string
+    description: text
+    due_date: timestamp
+    timestamps
+    relationships:
+      belongsTo: Classroom
+      morphMany: Comment
+      morphToMany: Topic
+
+  Submission:
+    ulid
+    assignment_id: ulid foreign:assignments onDelete:cascade
+    student_id: ulid foreign:users onDelete:cascade
+    content: text
+    status: enum:not_started,submitted,graded
+    submitted_at: timestamp nullable
+    timestamps
+    relationships:
+      hasOne: Grade
+
+  Grade:
+    ulid
+    submission_id: ulid foreign:submissions onDelete:cascade
+    grade: integer unsigned
+    comments: text nullable
+    timestamps
+
+  Discussion:
+    ulid
+    classroom_id: ulid foreign:classrooms onDelete:cascade
+    user_id: ulid foreign:users onDelete:cascade
+    content: text
+    timestamps
+
+  Attendance:
+    ulid
+    classroom_id: ulid foreign:classrooms onDelete:cascade
+    date: date
+    timestamps
+    relationships:
+      hasMany: AttendanceRecord
+      morphMany: Comment
+      morphToMany: Topic
+
+  AttendanceRecord:
+    ulid
+    attendance_id: ulid foreign:attendances onDelete:cascade
+    student_id: ulid foreign:users onDelete:cascade
+    status: enum:present,absent
+    timestamps
+
+  Comment:
+    ulid
+    user_id: ulid foreign:users onDelete:cascade
+    content: text
+    timestamps
+    relationships:
+      morphTo: Commentable
+
+  Notification:
+    ulid
+    user_id: ulid foreign:users onDelete:cascade
+    message: text
+    is_read: boolean default:false
+    timestamps
+    relationships:
+      belongsTo: User
+
+seeders: User, Classroom, Topic, Assignment, Submission, Grade, Discussion, Attendance, AttendanceRecord, Notification
