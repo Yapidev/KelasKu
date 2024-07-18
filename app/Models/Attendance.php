@@ -24,15 +24,6 @@ class Attendance extends Model
         'date',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'date' => 'date',
-    ];
-
     public function attendanceRecords(): HasMany
     {
         return $this->hasMany(AttendanceRecord::class);

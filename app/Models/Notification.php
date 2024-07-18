@@ -22,15 +22,6 @@ class Notification extends Model
         'is_read',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'is_read' => 'boolean',
-    ];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
