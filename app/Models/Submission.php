@@ -25,15 +25,6 @@ class Submission extends Model
         'submitted_at',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'submitted_at' => 'timestamp',
-    ];
-
     public function grade(): HasOne
     {
         return $this->hasOne(Grade::class);

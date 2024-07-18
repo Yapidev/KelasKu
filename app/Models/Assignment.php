@@ -25,15 +25,6 @@ class Assignment extends Model
         'due_date',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'due_date' => 'timestamp',
-    ];
-
     public function classroom(): BelongsTo
     {
         return $this->belongsTo(Classroom::class);
